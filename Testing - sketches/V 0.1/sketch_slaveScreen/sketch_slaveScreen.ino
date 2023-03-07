@@ -15,7 +15,7 @@ void loop() {
   delay(100);
   if(dataFromMaster == "Start vaskemaskine")
   {
-    //WriteToScreen(dataFromMaster);
+    WriteToScreen();
     //serialScreenErrorLog();
   }
 }
@@ -30,7 +30,7 @@ void receiveEvent(int bytes) {
   dataFromMaster = message;
 }
 
-void WriteToScreen(String program){
+void WriteToScreen(){
   lcd.init();
   lcd.clear();         
   
@@ -41,7 +41,7 @@ void WriteToScreen(String program){
   lcd.clear();         
   
   lcd.setCursor(1,0);
-  lcd.print(program);
+  lcd.print("Koge vask");
   
 }
 
