@@ -6,6 +6,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 String dataFromMaster;
 int btnState = 0;
+bool machineInUse = false;
 
 void setup() {
   Wire.begin(0x09);
@@ -14,25 +15,27 @@ void setup() {
   pinMode(vaskemaskinePin, OUTPUT);
   //pinMode(closeDoorPin, INPUT);
   Serial.begin(9600);
-  pinMode(2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(2), ISR_btnPressed, CHANGE);
+  //pinMode(2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(2), ISR_btnPressed, HIGH);
+  lcd.init();
   lcd.clear();
 }
 
 void loop() {
   delay(100);
-  if(dataFromMaster == "Start vaskemaskine")
+  //if(dataFromMaster == "Start vaskemaskine")
+  if(machineInUse)
   {
-  lcd.init();
-  lcd.clear();         
+    //lcd.init();
+    //lcd.clear();         
   
-  lcd.setCursor(3,0);
-  lcd.print("Load");
+    //lcd.setCursor(3,0);
+    //lcd.print("Load");
     //WriteToScreen(dataFromMaster);
     //btnState = digitalRead(closeDoorPin);
     Serial.println(btnState);
     if(btnState){
-      Serial.println("btn pressed");
+      //Serial.println("btn pressed");
       WriteToScreen(dataFromMaster);
       //digitalWrite(vaskemaskinePin, HIGH);
       runWash(1);
@@ -44,6 +47,9 @@ void loop() {
     }
     //digitalWrite(vaskemaskinePin, HIGH);
     //serialScreenErrorLog();
+  } else {
+    WriteToScreen("Scan RFID kort");
+    delay(30);
   }
 }
 
@@ -55,6 +61,7 @@ void receiveEvent(int bytes) {
   }
   Serial.println(message);
   dataFromMaster = message;
+  machineInUse = true;
 }
 
 void WriteToScreen(String program){
@@ -107,9 +114,15 @@ void serialScreenErrorLog(){
 }
 
 void ISR_btnPressed(){
-  
-  //Serial.println("btn pressed doooooooooown CHANGE");
-  btnState = 1;
+  static unsigned long last_interrupt_time = 0;
+  unsigned long interrupt_time = millis();
+  if (interrupt_time - last_interrupt_time > 200) 
+  {
+    Serial.println("btn pressed doooooooooown CHANGE");
+    //btnState = 1;
+    btnState = !btnState;
+  }
+  last_interrupt_time = interrupt_time;
 
 }
 
@@ -118,21 +131,36 @@ void runWash(int timeInMin){
   int timeInSec = 60 / timeInMin;
   for(int i = 0; i < timeInSec; i++){
     //Serial.println("runing");
-    delay(500);
+    delay(250);
     int timeLeft = timeInSec - i;
     screenTime(timeLeft);
   }
+  delay(500);
+  emtyMachineScreen();
   resetMachine();
+}
+
+void emtyMachineScreen(){
+  WriteToScreen("Tom maskineren");
+  while(btnState == 1){
+    Serial.println("indside: while(btnState == 1)");
+  }
 }
 
 void screenTime(int remainingTime){
   lcd.setCursor(0,1);
-  if(remainingTime < 10){
-    lcd.print("Time left: 0" + String(remainingTime));
+  String timeFormated = "";
+  if(remainingTime < 100 && remainingTime >= 10){
+    //lcd.print("Time left: 0" + String(remainingTime));
+    timeFormated = "0" + String(remainingTime);
+  } else if (remainingTime < 10){
+    timeFormated = "00" + String(remainingTime);
   } else {
-    lcd.print("Time left: " + String(remainingTime));
+    timeFormated = String(remainingTime);
+    //lcd.print("Time left: " + String(remainingTime));
   }
-  
+  Serial.println("btn start: " + String(btnState));
+  lcd.print("Time left: " + timeFormated);
 }
 
 void resetMachine(){
@@ -140,4 +168,5 @@ void resetMachine(){
   digitalWrite(vaskemaskinePin, LOW);
   btnState = 0;
   lcd.clear();
+  machineInUse = false;
 }
