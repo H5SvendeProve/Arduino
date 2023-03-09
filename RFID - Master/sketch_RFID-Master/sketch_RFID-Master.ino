@@ -24,8 +24,8 @@ void setup() {
 }
 void loop() {
   readRfidcard();
-  turnLedOnWithDelay(rfidCardHomeON);
-  if(inputRfidCard == rfidCardHomeON){
+  turnLedOnWithDelay(rfidCardLEDON);
+  if(inputRfidCard == rfidCardLEDON){
     Serial.println("Inside Loop => if(inputcard == homecard)");
     //Wire.beginTransmission(0x08);
     //Wire.write("110");
