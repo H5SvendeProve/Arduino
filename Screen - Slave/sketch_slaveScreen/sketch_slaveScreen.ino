@@ -142,6 +142,7 @@ void runWash(int timeInMin){
 
 void emtyMachineScreen(){
   WriteToScreen("Tom maskineren");
+  digitalWrite(vaskemaskinePin, LOW);
   while(btnState == 1){
     Serial.println("indside: while(btnState == 1)");
   }
