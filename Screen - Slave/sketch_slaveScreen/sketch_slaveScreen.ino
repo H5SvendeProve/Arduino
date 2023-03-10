@@ -116,7 +116,7 @@ void serialScreenErrorLog(){
 void ISR_btnPressed(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
-  if (interrupt_time - last_interrupt_time > 200) 
+  if (interrupt_time - last_interrupt_time > 500) 
   {
     Serial.println("btn pressed doooooooooown CHANGE");
     //btnState = 1;

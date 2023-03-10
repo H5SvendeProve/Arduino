@@ -34,13 +34,13 @@ void loop() {
     writeI2C(0x08, "110");
     
     delay(500);
-    Wire.requestFrom(0x08, 5);
+    Wire.requestFrom(0x08, 50);
     String respons = "";
     while(Wire.available()) {
       char c = Wire.read();
     respons += c;
   }
-  Serial.println(respons);
+  Serial.println("response: " + String(respons));
   if(respons == "True " ){
     Serial.println("inside if(res == True)");
     Wire.beginTransmission(0x09);
