@@ -29,9 +29,6 @@ void loop() {
   turnLedOnWithDelay(rfidCardLEDON);
   if(inputRfidCard == rfidCardLEDON){
     Serial.println("Inside Loop => if(inputcard == homecard)");
-    //Wire.beginTransmission(0x08);
-    //Wire.write("110");
-    //Wire.endTransmission();
     
     writeI2C(0x08, "110");
     
@@ -44,28 +41,17 @@ void loop() {
         respons += c;
       }
     }
-  Serial.println("response: " + String(respons));
+    Serial.println("response: " + String(respons));
 
-  String machineType = GetWhitchMachine(respons);
-  if(machineType == "Vaskemaskine"){
-    String WriteToScreen = getDataForeScreen(respons);
-    const char* WriteToScreenChar = WriteToScreen.c_str();
-    Wire.beginTransmission(0x09);
-    //Wire.write("Start vaskemaskine");
-    Wire.write(WriteToScreenChar);
-    Wire.endTransmission();
+    String machineType = GetWhitchMachine(respons);
+    if(machineType == "Vaskemaskine"){
+      String WriteToScreen = getDataForeScreen(respons);
+      const char* WriteToScreenChar = WriteToScreen.c_str();
+      Wire.beginTransmission(0x09);
+      Wire.write(WriteToScreenChar);
+      Wire.endTransmission();
+    }
   }
-  
-  //if(respons == "True " ){
-  //  Serial.println("inside if(res == True)");
-  //  Wire.beginTransmission(0x09);
-  //  Wire.write("Start vaskemaskine");
-  //  Wire.endTransmission();
-  //}
-  
-    //writeI2C(0x09, "Start vaskemaskine");
-  }
-
 
   resetInputRfidCard();
 }
@@ -77,7 +63,6 @@ void turnLedOnWithDelay(String rfidCard){
     delay(100);
     digitalWrite(Led_PIN, LOW);
   }
-  //resetInputRfidCard();
 }
 
 void turnLedOnOff(String rfidCardOn, String rfidCardOff){
@@ -87,7 +72,6 @@ void turnLedOnOff(String rfidCardOn, String rfidCardOff){
   else if(inputRfidCard == rfidCardLEDOFF){
     digitalWrite(Led_PIN, LOW);
   }
-  //resetInputRfidCard();
 }
 
 void resetInputRfidCard(){
@@ -115,10 +99,6 @@ void writeI2C(int address, char* content){
 String GetWhitchMachine(String input){
   int indexOfKoma1 = input.indexOf(',') + 2;
   int indexOfKoma2 = input.indexOf(',', indexOfKoma1) + 1;
-  Serial.println("=====================");
-  Serial.println(indexOfKoma1);
-  Serial.println(indexOfKoma2);
-  Serial.println("=====================");
   String substr = input.substring(indexOfKoma2);
   Serial.println("sub string: " + substr);
   return substr;
@@ -127,10 +107,6 @@ String GetWhitchMachine(String input){
 String getDataForeScreen(String input){
   int indexOfKoma1 = input.indexOf(',') + 2;
   int indexOfKoma2 = input.indexOf(',', indexOfKoma1) + 1;
-  Serial.println("=====================");
-  Serial.println(indexOfKoma1);
-  Serial.println(indexOfKoma2);
-  Serial.println("=====================");
   String output = input.substring(0, indexOfKoma2 - 1);
   Serial.println(output);
 
