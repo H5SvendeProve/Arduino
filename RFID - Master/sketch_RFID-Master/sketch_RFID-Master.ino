@@ -74,7 +74,7 @@ void turnLedOnWithDelay(String rfidCard){
   if(inputRfidCard == rfidCard){
     Serial.println("turnLedOnWithDelay => if(rfidCard == rfidCard)");
     digitalWrite(Led_PIN, HIGH);
-    delay(2000);
+    delay(100);
     digitalWrite(Led_PIN, LOW);
   }
   //resetInputRfidCard();
