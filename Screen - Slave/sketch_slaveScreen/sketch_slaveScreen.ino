@@ -1,7 +1,6 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #define vaskemaskinePin 8
-//#define closeDoorPin 9
 
 LiquidCrystal_I2C lcd(0x27,16,2);
 String dataFromMaster;
@@ -15,9 +14,7 @@ void setup() {
   lcd.backlight();
   Wire.onReceive(receiveEvent);
   pinMode(vaskemaskinePin, OUTPUT);
-  //pinMode(closeDoorPin, INPUT);
   Serial.begin(9600);
-  //pinMode(2, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(2), ISR_btnPressed, HIGH);
   lcd.init();
   lcd.clear();
@@ -25,34 +22,17 @@ void setup() {
 
 void loop() {
   delay(100);
-  //if(dataFromMaster == "Start vaskemaskine")
   if(machineInUse)
   {
-    //lcd.init();
-    //lcd.clear();         
-  
-    //lcd.setCursor(3,0);
-    //lcd.print("Load");
-    //WriteToScreen(dataFromMaster);
-    //btnState = digitalRead(closeDoorPin);
-    //Serial.println(btnState);
     if(btnState){
       parseData(dataFromMaster);
-      //Serial.println("btn pressed");
-      //WriteToScreen(dataFromMaster);
-      WriteToScreen(ProgramToRun);
-      //digitalWrite(vaskemaskinePin, HIGH);
+      WriteToScreen(ProgramToRun, 0);
       runWash(timeToRun);
     } else  {
-      lcd.clear();   
-            
-      lcd.setCursor(3,0);
-      lcd.print("Load");
+      WriteToScreen("Load", 3);
     }
-    //digitalWrite(vaskemaskinePin, HIGH);
-    //serialScreenErrorLog();
   } else {
-    WriteToScreen("Scan RFID kort");
+    WriteToScreen("Scan RFID kort", 0);
     delay(30);
   }
 }
@@ -68,19 +48,10 @@ void receiveEvent(int bytes) {
   machineInUse = true;
 }
 
-void WriteToScreen(String program){
-  //lcd.init();
-  //lcd.clear();         
-  
-  //lcd.setCursor(3,0);
-  //lcd.print("Load");
-  
-  //delay(3000);
+void WriteToScreen(String text, int pos){
   lcd.clear();         
-  
   lcd.setCursor(0,0);
-  lcd.print(program);
-  
+  lcd.print(text);
 }
 
 void serialScreenErrorLog(){
@@ -122,19 +93,16 @@ void ISR_btnPressed(){
   unsigned long interrupt_time = millis();
   if (interrupt_time - last_interrupt_time > 500) 
   {
-    Serial.println("btn pressed doooooooooown CHANGE");
-    //btnState = 1;
+    Serial.println("btn pressed ISR");
     btnState = !btnState;
   }
   last_interrupt_time = interrupt_time;
-
 }
 
 void runWash(int timeInMin){
   digitalWrite(vaskemaskinePin, HIGH);
   //int timeInSec = 60 / timeInMin;
   for(int i = 0; i < timeInMin; i++){
-    //Serial.println("runing");
     delay(250);
     int timeLeft = timeInMin - i;
     screenTime(timeLeft);
@@ -145,7 +113,7 @@ void runWash(int timeInMin){
 }
 
 void emtyMachineScreen(){
-  WriteToScreen("Tom maskineren");
+  WriteToScreen("Tom maskineren", 0);
   digitalWrite(vaskemaskinePin, LOW);
   while(btnState == 1){
     Serial.println("indside: while(btnState == 1)");
@@ -156,15 +124,12 @@ void screenTime(int remainingTime){
   lcd.setCursor(0,1);
   String timeFormated = "";
   if(remainingTime < 100 && remainingTime >= 10){
-    //lcd.print("Time left: 0" + String(remainingTime));
     timeFormated = "0" + String(remainingTime);
   } else if (remainingTime < 10){
     timeFormated = "00" + String(remainingTime);
   } else {
     timeFormated = String(remainingTime);
-    //lcd.print("Time left: " + String(remainingTime));
   }
-  Serial.println("btn start: " + String(btnState));
   lcd.print("Time left: " + timeFormated);
 }
 
@@ -182,13 +147,9 @@ void resetMachine(){
 void parseData(String input){
   int indexOfKoma1 = input.indexOf(',') + 1;
   int indexOfKoma2 = input.indexOf(',', indexOfKoma1) + 1;
-  Serial.println("=====================");
-  Serial.println(indexOfKoma1);
-  Serial.println(indexOfKoma2);
-  Serial.println("=====================");
   ProgramToRun = input.substring(0, indexOfKoma1 - 1);
   timeToRun = (input.substring(indexOfKoma1, indexOfKoma2 - 1)).toInt();
   
-  Serial.println(ProgramToRun);
-  Serial.println(timeToRun);
+  Serial.println("Program to run: " + ProgramToRun);
+  Serial.println("Time to run: " + String(timeToRun));
 }
