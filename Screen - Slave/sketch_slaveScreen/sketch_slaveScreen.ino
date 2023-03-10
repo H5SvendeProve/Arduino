@@ -7,6 +7,8 @@ LiquidCrystal_I2C lcd(0x27,16,2);
 String dataFromMaster;
 int btnState = 0;
 bool machineInUse = false;
+String ProgramToRun = "null program";
+int timeToRun = 0;
 
 void setup() {
   Wire.begin(0x09);
@@ -33,12 +35,14 @@ void loop() {
     //lcd.print("Load");
     //WriteToScreen(dataFromMaster);
     //btnState = digitalRead(closeDoorPin);
-    Serial.println(btnState);
+    //Serial.println(btnState);
     if(btnState){
+      parseData(dataFromMaster);
       //Serial.println("btn pressed");
-      WriteToScreen(dataFromMaster);
+      //WriteToScreen(dataFromMaster);
+      WriteToScreen(ProgramToRun);
       //digitalWrite(vaskemaskinePin, HIGH);
-      runWash(1);
+      runWash(timeToRun);
     } else  {
       lcd.clear();   
             
@@ -74,7 +78,7 @@ void WriteToScreen(String program){
   //delay(3000);
   lcd.clear();         
   
-  lcd.setCursor(1,0);
+  lcd.setCursor(0,0);
   lcd.print(program);
   
 }
@@ -128,11 +132,11 @@ void ISR_btnPressed(){
 
 void runWash(int timeInMin){
   digitalWrite(vaskemaskinePin, HIGH);
-  int timeInSec = 60 / timeInMin;
-  for(int i = 0; i < timeInSec; i++){
+  //int timeInSec = 60 / timeInMin;
+  for(int i = 0; i < timeInMin; i++){
     //Serial.println("runing");
     delay(250);
-    int timeLeft = timeInSec - i;
+    int timeLeft = timeInMin - i;
     screenTime(timeLeft);
   }
   delay(500);
@@ -170,4 +174,21 @@ void resetMachine(){
   btnState = 0;
   lcd.clear();
   machineInUse = false;
+
+  String ProgramToRun = "null program";
+  int timeToRun = 0;
+}
+
+void parseData(String input){
+  int indexOfKoma1 = input.indexOf(',') + 1;
+  int indexOfKoma2 = input.indexOf(',', indexOfKoma1) + 1;
+  Serial.println("=====================");
+  Serial.println(indexOfKoma1);
+  Serial.println(indexOfKoma2);
+  Serial.println("=====================");
+  ProgramToRun = input.substring(0, indexOfKoma1 - 1);
+  timeToRun = (input.substring(indexOfKoma1, indexOfKoma2 - 1)).toInt();
+  
+  Serial.println(ProgramToRun);
+  Serial.println(timeToRun);
 }
