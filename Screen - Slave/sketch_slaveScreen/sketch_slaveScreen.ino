@@ -106,7 +106,7 @@ void runWash(int timeInMin){
   digitalWrite(vaskemaskinePin, HIGH);
   //int timeInSec = 60 / timeInMin;
   for(int i = 0; i < timeInMin; i++){
-    delay(10);
+    delay(150);
     int timeLeft = timeInMin - i;
     screenTime(timeLeft);
   }
