@@ -30,6 +30,7 @@ void loop() {
       runWash(timeToRun);
     } else  {
       WriteToScreen("Load", 3);
+      //delay(30);
     }
   } else {
     WriteToScreen("Scan RFID kort", 0);
@@ -49,9 +50,11 @@ void receiveEvent(int bytes) {
 }
 
 void WriteToScreen(String text, int pos){
+  delay(25);
   lcd.clear();         
   lcd.setCursor(0,0);
   lcd.print(text);
+  delay(25);
 }
 
 void serialScreenErrorLog(){
@@ -103,7 +106,7 @@ void runWash(int timeInMin){
   digitalWrite(vaskemaskinePin, HIGH);
   //int timeInSec = 60 / timeInMin;
   for(int i = 0; i < timeInMin; i++){
-    delay(250);
+    delay(10);
     int timeLeft = timeInMin - i;
     screenTime(timeLeft);
   }

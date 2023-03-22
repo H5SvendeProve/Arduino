@@ -7,6 +7,7 @@
 
 RFID rfid(SS_PIN, RST_PIN);
 String inputRfidCard;
+bool isRFIDCardScaned = false;
 
 String rfidCardLEDON = "203 17 205 34";
 String rfidCardLEDOFF = "1 233 208 46";
@@ -27,10 +28,14 @@ void setup() {
 void loop() {
   readRfidcard();
   turnLedOnWithDelay(rfidCardLEDON);
-  if(inputRfidCard == rfidCardLEDON){
+  if(isRFIDCardScaned){
+  //if(inputRfidCard == rfidCardLEDON){
     Serial.println("Inside Loop => if(inputcard == homecard)");
-    
-    writeI2C(0x08, "110");
+    inputRfidCard.replace(" ", "");
+    const char* RFIDChar = inputRfidCard.c_str();
+    writeI2C(0x08, RFIDChar);
+    //writeI2C(0x08, "110");
+    Serial.println("RFID card: " + String(RFIDChar));
     
     delay(500);
     Wire.requestFrom(0x08, 32);
@@ -51,9 +56,10 @@ void loop() {
       Wire.write(WriteToScreenChar);
       Wire.endTransmission();
     }
+  //}
   }
-
   resetInputRfidCard();
+  isRFIDCardScaned = false;
 }
 
 void turnLedOnWithDelay(String rfidCard){
@@ -83,6 +89,7 @@ void readRfidcard(){
     if (rfid.readCardSerial()) {
       inputRfidCard = String(rfid.serNum[0]) + " " + String(rfid.serNum[1]) + " " + String(rfid.serNum[2]) + " " + String(rfid.serNum[3]);
       Serial.println(inputRfidCard);
+      isRFIDCardScaned = true;
     }
       rfid.halt();
   }
