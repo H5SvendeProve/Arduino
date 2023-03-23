@@ -10,20 +10,11 @@ String httpRequsetPareser_StatusCode(String textToParse){
 }
 
 String httpRequsetPareser(String textToParse){
-  //Serial.println("parser start:");
-  //Serial.println(textToParse);  // Prints the string with \n as a newline character
-  //Serial.println();     // Creates a new line
-  //Serial.println(textToParse);  // Prints the string with \n as a literal string
-  //Serial.println(textToParse);
-  //Serial.println("parser start 2:");
-  //String test = textToParse;
-  //test.replace("\\", "\\\\');
-  //Serial.println(test);
   int indexStart = textToParse.indexOf("\r\n\r\n") + 8;
   int indexEnd = textToParse.indexOf('\n', indexStart);
   String substr = textToParse.substring(indexStart, indexEnd);
   
-  Serial.println("parser: httprequsetparser");
+  //Serial.println("parser: httprequsetparser");
   Serial.println("=== after parser http.. =============");
   Serial.println(substr);
   Serial.println("=====================================");
@@ -35,24 +26,28 @@ String pareseModule(String textToParse){
   int indexOfKoma2 = textToParse.indexOf(',', indexOfKoma1) + 2;
   int indexOfKoma3 = textToParse.indexOf(',', indexOfKoma2) + 2;
   int indexOfKoma4 = textToParse.indexOf(',', indexOfKoma3) + 2;
-  Serial.println("=====================");
-  Serial.println(indexOfKoma1);
-  Serial.println(indexOfKoma2);
-  Serial.println(indexOfKoma3);
-  Serial.println(indexOfKoma4);
-  Serial.println("=====================");
+  
+  //Serial.println("=====================");
+  //Serial.println(indexOfKoma1);
+  //Serial.println(indexOfKoma2);
+  //Serial.println(indexOfKoma3);
+  //Serial.println(indexOfKoma4);
+  //Serial.println("=====================");
+  
   String substr1 = textToParse.substring(0, indexOfKoma1);
   String substr2 = textToParse.substring(indexOfKoma1, indexOfKoma2);
   String substr3 = textToParse.substring(indexOfKoma2, indexOfKoma3);
   String substr4 = textToParse.substring(indexOfKoma3, indexOfKoma4);
   String substr5 = textToParse.substring(indexOfKoma4);
-  Serial.println("####################");
-  Serial.println(substr1);
-  Serial.println(substr2);
-  Serial.println(substr3);
-  Serial.println(substr4);
-  Serial.println(substr5);
-  Serial.println("####################");
+  
+  //Serial.println("####################");
+  //Serial.println(substr1);
+  //Serial.println(substr2);
+  //Serial.println(substr3);
+  //Serial.println(substr4);
+  //Serial.println(substr5);
+  //Serial.println("####################");
+  
   int indexStartSub1 = substr1.indexOf(':') + 2;
   int indexEndSub1 = substr1.indexOf('"', indexStartSub1);
   String programName = substr1.substring(indexStartSub1, indexEndSub1);
@@ -73,13 +68,13 @@ String pareseModule(String textToParse){
   int indexEndSub5 = substr5.indexOf('"', indexStartSub5);
   String machineType = substr5.substring(indexStartSub5, indexEndSub5);
   
-  Serial.println("xxxxxxxxxxxxxxxxxxxx");
-  Serial.println(programName);
-  Serial.println(runTime);
-  Serial.println(manufacturer);
-  Serial.println(modelName);
-  Serial.println(machineType);
-  Serial.println("xxxxxxxxxxxxxxxxxxxx");
+  //Serial.println("xxxxxxxxxxxxxxxxxxxx");
+  //Serial.println(programName);
+  //Serial.println(runTime);
+  //Serial.println(manufacturer);
+  //Serial.println(modelName);
+  //Serial.println(machineType);
+  //Serial.println("xxxxxxxxxxxxxxxxxxxx");
 
   String output = String(programName) + "," + String(runTime) + "," + String(machineType);
   Serial.println(output);

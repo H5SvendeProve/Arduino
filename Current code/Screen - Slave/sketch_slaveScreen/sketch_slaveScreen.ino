@@ -30,7 +30,6 @@ void loop() {
       runWash(timeToRun);
     } else  {
       WriteToScreen("Load", 3);
-      //delay(30);
     }
   } else {
     WriteToScreen("Scan RFID kort", 0);
@@ -104,7 +103,6 @@ void ISR_btnPressed(){
 
 void runWash(int timeInMin){
   digitalWrite(vaskemaskinePin, HIGH);
-  //int timeInSec = 60 / timeInMin;
   for(int i = 0; i < timeInMin; i++){
     delay(150);
     int timeLeft = timeInMin - i;

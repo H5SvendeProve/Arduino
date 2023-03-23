@@ -29,7 +29,6 @@ void loop() {
   readRfidcard();
   turnLedOnWithDelay(rfidCardLEDON);
   if(isRFIDCardScaned){
-  //if(inputRfidCard == rfidCardLEDON){
     Serial.println("Inside Loop => if(inputcard == homecard)");
     inputRfidCard.replace(" ", "");
     const char* RFIDChar = inputRfidCard.c_str();
@@ -56,7 +55,6 @@ void loop() {
       Wire.write(WriteToScreenChar);
       Wire.endTransmission();
     }
-  //}
   }
   resetInputRfidCard();
   isRFIDCardScaned = false;
